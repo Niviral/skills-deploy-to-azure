@@ -2,17 +2,33 @@ name: dispatch
 on:
   workflow_dispatch:
     inputs:
-
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+      environment:
+        description: 'Enviroment'
+        required: true
+        type: environment
 
 jobs:
   log-the-inputs:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [10, 12, 14]
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
+      - name: 'name'
         run: |
           echo "Log level: $LEVEL"
           echo "Tags: $TAGS"
           echo "Environment: $ENVIRONMENT"
         env:
           LEVEL: ${{ inputs.logLevel }}
-          TAGS: ${{ inputs.tags }}
           ENVIRONMENT: ${{ inputs.environment }}
